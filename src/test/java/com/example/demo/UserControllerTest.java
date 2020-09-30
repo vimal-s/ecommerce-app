@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,11 +26,12 @@ public class UserControllerTest {
 
     private ResultActions resultActions;
 
-    private final String username = "testUser";
+    private final String USERNAME = "testUser";
+    private final String PASSWORD = "testPassword";
 
     private ResultActions createUser() throws Exception {
-        String requestBody = "{\"username\": \"" + username + "\"}";
-
+        String requestBody =
+                "{\"username\": \"" + USERNAME + "\", \"password\": \"" + PASSWORD + "\"}";
         return
                 mvc.perform(
                         post("/api/user/create")
@@ -37,12 +39,14 @@ public class UserControllerTest {
                                 .content(requestBody));
     }
 
+    // todo: performing a post request, still WithMockUser annotation not required. why?
     @BeforeEach
     void setUp() throws Exception {
         resultActions = createUser();
     }
 
     @Test
+    @WithMockUser
     void testCreateUser() throws Exception {
         resultActions
                 .andDo(print())
@@ -50,6 +54,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @WithMockUser
     void testFindById() throws Exception {
         mvc.perform(get("/api/user/id/1"))
                 .andDo(print())
@@ -57,8 +62,9 @@ public class UserControllerTest {
     }
 
     @Test
+    @WithMockUser
     void testFindByUsername() throws Exception {
-        mvc.perform(get("/api/user/" + username))
+        mvc.perform(get("/api/user/" + USERNAME))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
