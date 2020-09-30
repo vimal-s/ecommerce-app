@@ -31,7 +31,10 @@ public class UserControllerTest {
 
     private ResultActions createUser() throws Exception {
         String requestBody =
-                "{\"username\": \"" + USERNAME + "\", \"password\": \"" + PASSWORD + "\"}";
+                "{" +
+                    "\"username\": \"" + USERNAME + "\", " +
+                    "\"password\": \"" + PASSWORD + "\", " +
+                    "\"confirmPassword\": \"" + PASSWORD + "\"}";
         return
                 mvc.perform(
                         post("/api/user/create")

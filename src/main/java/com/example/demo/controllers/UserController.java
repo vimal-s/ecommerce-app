@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import com.example.demo.PasswordConfirmationException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,10 @@ public class UserController {
 	
 	@PostMapping("/create")
 	public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
+		if (!createUserRequest.getPassword().equalsIgnoreCase(createUserRequest.getConfirmPassword())) {
+			throw new PasswordConfirmationException("Password confirmation failed. Please provide correct input");
+		}
+
 		User user = new User();
 		user.setUsername(createUserRequest.getUsername());
 		user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
