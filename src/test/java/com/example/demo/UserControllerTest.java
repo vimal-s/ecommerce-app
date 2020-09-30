@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.model.persistence.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +30,16 @@ public class UserControllerTest {
 
     private final String USERNAME = "testUser";
     private final String PASSWORD = "testPassword";
+    private final String REQUEST_BODY =
+            "{\"username\": \"" + USERNAME + "\", \"password\": \"" + PASSWORD + "\"}";
 
+    // todo: replace this with pre created user in the test database
     private ResultActions createUser() throws Exception {
-        String requestBody =
-                "{\"username\": \"" + USERNAME + "\", \"password\": \"" + PASSWORD + "\"}";
         return
                 mvc.perform(
                         post("/api/user/create")
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                                .content(requestBody));
+                                .content(REQUEST_BODY));
     }
 
     // todo: performing a post request, still WithMockUser annotation not required. why?
@@ -46,7 +49,6 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser
     void testCreateUser() throws Exception {
         resultActions
                 .andDo(print())
@@ -54,9 +56,22 @@ public class UserControllerTest {
     }
 
     @Test
+    void testLogin() throws Exception {
+        mvc.perform(post("/login")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(REQUEST_BODY))
+           .andDo(print())
+           .andExpect(status().isOk());
+    }
+
+    @Test
     @WithMockUser
     void testFindById() throws Exception {
-        mvc.perform(get("/api/user/id/1"))
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+
+        User user = new ObjectMapper().readValue(responseBody, User.class);
+
+        mvc.perform(get("/api/user/id/" + user.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
