@@ -34,6 +34,7 @@ public class CartController {
 	
 	@PostMapping("/addToCart")
 	public ResponseEntity<Cart> addTocart(@RequestBody ModifyCartRequest request) {
+		// todo: only allow if this username match with the authenticated username
 		User user = userRepository.findByUsername(request.getUsername());
 		if(user == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
