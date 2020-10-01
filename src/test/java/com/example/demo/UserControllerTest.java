@@ -5,7 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.demo.model.persistence.User;
+import com.example.demo.model.requests.CreateUserRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -26,44 +25,42 @@ public class UserControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    private ResultActions resultActions;
-
     private final String USERNAME = "testUser";
     private final String PASSWORD = "testPassword";
-    private final String REQUEST_BODY =
-                            "{" +
-                                "\"username\": \"" + USERNAME + "\", " +
-                                "\"password\": \"" + PASSWORD + "\", " +
-                                "\"confirmPassword\": \"" + PASSWORD + "\"" +
-                            "}";
 
-    // todo: replace this with pre created user in the test database
-    private ResultActions createUser() throws Exception {
-        return
-                mvc.perform(
-                        post("/api/user/create")
-                                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                                .content(REQUEST_BODY));
+    private CreateUserRequest createUserRequest() {
+        CreateUserRequest userRequest = new CreateUserRequest();
+        userRequest.setPassword("testPassword2");
+        userRequest.setUsername("testUser2");
+        userRequest.setConfirmPassword("testPassword2");
+        return userRequest;
     }
 
     // todo: performing a post request, still WithMockUser annotation not required. why?
     @BeforeEach
     void setUp() throws Exception {
-        resultActions = createUser();
+//        resultActions = createUser();
     }
 
     @Test
     void testCreateUser() throws Exception {
-        resultActions
+        CreateUserRequest userRequest = createUserRequest();
+
+        mvc.perform(
+                post("/api/user/create")
+                    .contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .content(new ObjectMapper().writeValueAsString(userRequest)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
     void testLogin() throws Exception {
+        String requestBody = "{\"username\": \"" + USERNAME + "\", \"password\": \"" + PASSWORD + "\"}";
+
         mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(REQUEST_BODY))
+                .content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -71,11 +68,7 @@ public class UserControllerTest {
     @Test
     @WithMockUser
     void testFindById() throws Exception {
-        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
-
-        User user = new ObjectMapper().readValue(responseBody, User.class);
-
-        mvc.perform(get("/api/user/id/" + user.getId()))
+        mvc.perform(get("/api/user/id/" + 1))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
