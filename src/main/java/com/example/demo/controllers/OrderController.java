@@ -36,6 +36,7 @@ public class OrderController {
 			return ResponseEntity.notFound().build();
 		}
 		UserOrder order = UserOrder.createFromCart(user.getCart());
+		// todo: throw exception here if cart is empty
 		orderRepository.save(order);
 		return ResponseEntity.ok(order);
 	}
