@@ -9,4 +9,8 @@ public class ItemNotFoundException extends RuntimeException {
     public ItemNotFoundException(long itemId) {
         super("Item not found with id: " + itemId);
     }
+
+    public ItemNotFoundException(String itemName) {
+        super("Item not found with name: " + itemName);
+    }
 }
