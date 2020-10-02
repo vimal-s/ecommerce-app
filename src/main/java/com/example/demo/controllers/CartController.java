@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import com.example.demo.service.CartService;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -31,40 +32,22 @@ public class CartController {
 	
 	@Autowired
 	private ItemRepository itemRepository;
-	
+
+	private CartService cartService;
+
+	public CartController(CartService cartService) {
+		this.cartService = cartService;
+	}
+
 	@PostMapping("/addToCart")
-	public ResponseEntity<Cart> addTocart(@RequestBody ModifyCartRequest request) {
-		// todo: only allow if this username match with the authenticated username
-		User user = userRepository.findByUsername(request.getUsername());
-		if(user == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
-		Optional<Item> item = itemRepository.findById(request.getItemId());
-		if(!item.isPresent()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
-		Cart cart = user.getCart();
-		IntStream.range(0, request.getQuantity())
-			.forEach(i -> cart.addItem(item.get()));
-		cartRepository.save(cart);
-		return ResponseEntity.ok(cart);
+	public ResponseEntity<Cart> addToCart(@RequestBody ModifyCartRequest request) {
+		// todo: (suggestion) only allow if this username match with the authenticated username
+		return ResponseEntity.ok(cartService.addItemToCart(request));
 	}
 	
 	@PostMapping("/removeFromCart")
-	public ResponseEntity<Cart> removeFromcart(@RequestBody ModifyCartRequest request) {
-		User user = userRepository.findByUsername(request.getUsername());
-		if(user == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
-		Optional<Item> item = itemRepository.findById(request.getItemId());
-		if(!item.isPresent()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
-		Cart cart = user.getCart();
-		IntStream.range(0, request.getQuantity())
-			.forEach(i -> cart.removeItem(item.get()));
-		cartRepository.save(cart);
-		return ResponseEntity.ok(cart);
+	public ResponseEntity<Cart> removeFromCart(@RequestBody ModifyCartRequest request) {
+		return ResponseEntity.ok(cartService.removeItemFromCart(request));
 	}
 		
 }
