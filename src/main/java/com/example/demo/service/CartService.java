@@ -33,6 +33,10 @@ public class CartService {
         this.userRepository = userRepository;
     }
 
+    public Cart save(Cart cart) {
+        return cartRepository.save(cart);
+    }
+
     public Cart addItemToCart(ModifyCartRequest cartRequest) {
         Cart cart = getUser(cartRequest).getCart();
         Item item = getItem(cartRequest);

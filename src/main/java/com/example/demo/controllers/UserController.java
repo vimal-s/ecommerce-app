@@ -1,6 +1,8 @@
 package com.example.demo.controllers;
 
 import com.example.demo.PasswordConfirmationException;
+import com.example.demo.service.CartService;
+import com.example.demo.service.UserService;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,30 +25,32 @@ import com.example.demo.model.requests.CreateUserRequest;
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-	
-	@Autowired
-	private UserRepository userRepository;
-	
-	@Autowired
-	private CartRepository cartRepository;
+
+	private UserService userService;
+
+	private CartService cartService;
 
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	public UserController(BCryptPasswordEncoder bCryptPasswordEncoder) {
+	public UserController(
+			UserService userService,
+			CartService cartService,
+			BCryptPasswordEncoder bCryptPasswordEncoder) {
+		this.userService = userService;
+		this.cartService = cartService;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 	}
 
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
-		return ResponseEntity.of(userRepository.findById(id));
+		return ResponseEntity.ok(userService.getUser(id));
 	}
-	
+
 	@GetMapping("/{username}")
-	public ResponseEntity<User> findByUserName(@PathVariable String username) {
-		User user = userRepository.findByUsername(username);
-		return user == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(user);
+	public ResponseEntity<User> findByUsername(@PathVariable String username) {
+		return ResponseEntity.ok(userService.getUser(username));
 	}
-	
+
 	@PostMapping("/create")
 	public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
 		if (!createUserRequest.getPassword().equalsIgnoreCase(createUserRequest.getConfirmPassword())) {
@@ -56,11 +60,9 @@ public class UserController {
 		User user = new User();
 		user.setUsername(createUserRequest.getUsername());
 		user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
-		Cart cart = new Cart();
-		cartRepository.save(cart);
-		user.setCart(cart);
-		userRepository.save(user);
-		return ResponseEntity.ok(user);
+		user.setCart(cartService.save(new Cart()));
+
+		return ResponseEntity.ok(userService.save(user));
 	}
-	
+
 }
