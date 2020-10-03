@@ -6,6 +6,8 @@ import com.example.demo.model.persistence.User;
 import com.example.demo.model.requests.CreateUserRequest;
 import com.example.demo.service.CartService;
 import com.example.demo.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/user")
 public class UserController {
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     private UserService userService;
     private CartService cartService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -47,6 +50,7 @@ public class UserController {
         if (!createUserRequest.getPassword()
                 .equalsIgnoreCase(
                         createUserRequest.getConfirmPassword())) {
+            logger.info("User creation failed. PasswordConfirmationException occurred");
             throw new PasswordConfirmationException(
                     "Password confirmation failed. Please provide correct input");
         }
@@ -56,6 +60,8 @@ public class UserController {
         user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
         user.setCart(cartService.save(new Cart()));
 
-        return ResponseEntity.ok(userService.save(user));
+        user = userService.save(user);
+        logger.info("User created successfully");
+        return ResponseEntity.ok(user);
     }
 }
