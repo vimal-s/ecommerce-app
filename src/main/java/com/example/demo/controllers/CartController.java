@@ -21,7 +21,6 @@ public class CartController {
 
     @PostMapping("/addToCart")
     public ResponseEntity<Cart> addToCart(@RequestBody ModifyCartRequest request) {
-        // todo: (suggestion) only allow if this username match with the authenticated username
         return ResponseEntity.ok(cartService.addItemToCart(request));
     }
 

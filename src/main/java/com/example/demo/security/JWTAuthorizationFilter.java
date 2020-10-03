@@ -32,7 +32,6 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         String token = request.getHeader(HEADER_STRING);
         if (token == null || !token.startsWith(TOKEN_PREFIX)) {
             chain.doFilter(request, response);
-            // todo: see if I can throw exception here
             return;
         }
 

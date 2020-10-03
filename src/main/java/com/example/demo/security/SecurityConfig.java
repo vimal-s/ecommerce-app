@@ -1,5 +1,7 @@
 package com.example.demo.security;
 
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,9 +27,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
 
-    // todo: (validation should be done on all requests)
-    //       if jwt is successfully validated on 1 request
-    //       then no validation is required for subsequent requests
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
@@ -36,6 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager()))
-                .csrf().disable();
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(STATELESS);
     }
 }
