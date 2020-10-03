@@ -3,7 +3,6 @@ package com.example.demo.service;
 import com.example.demo.UserNotFoundException;
 import com.example.demo.model.persistence.User;
 import com.example.demo.model.persistence.repositories.UserRepository;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service

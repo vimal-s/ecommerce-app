@@ -27,7 +27,7 @@ public class CartControllerTest {
 
     private ModifyCartRequest createCartRequest() {
         ModifyCartRequest cartRequest = new ModifyCartRequest();
-        cartRequest.setItemId(1);
+        cartRequest.setItemId(2);
         cartRequest.setQuantity(1);
         cartRequest.setUsername(USERNAME);
         return cartRequest;
@@ -40,8 +40,8 @@ public class CartControllerTest {
 
         mvc.perform(
                 post("/api/cart/addToCart")
-                    .contentType(APPLICATION_JSON_UTF8)
-                    .content(new ObjectMapper().writeValueAsString(cartRequest)))
+                        .contentType(APPLICATION_JSON_UTF8)
+                        .content(new ObjectMapper().writeValueAsString(cartRequest)))
            .andDo(print())
            .andExpect(status().isOk());
     }
@@ -53,8 +53,8 @@ public class CartControllerTest {
 
         mvc.perform(
                 post("/api/cart/removeFromCart")
-                    .contentType(APPLICATION_JSON_UTF8)
-                    .content(new ObjectMapper().writeValueAsString(cartRequest)))
+                        .contentType(APPLICATION_JSON_UTF8)
+                        .content(new ObjectMapper().writeValueAsString(cartRequest)))
            .andDo(print())
            .andExpect(status().isOk());
     }

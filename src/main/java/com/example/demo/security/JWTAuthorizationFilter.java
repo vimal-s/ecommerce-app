@@ -26,9 +26,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(
-                        HttpServletRequest request,
-                        HttpServletResponse response,
-                        FilterChain chain) throws IOException, ServletException {
+                    HttpServletRequest request,
+                    HttpServletResponse response,
+                    FilterChain chain) throws IOException, ServletException {
         String token = request.getHeader(HEADER_STRING);
         if (token == null || !token.startsWith(TOKEN_PREFIX)) {
             chain.doFilter(request, response);
@@ -46,9 +46,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         // todo: how can I expire the token if associated user is deleted from the database
         String username =
                 JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
-                   .build()
-                   .verify(token.replace(TOKEN_PREFIX, ""))
-                   .getSubject();
+                        .build()
+                        .verify(token.replace(TOKEN_PREFIX, ""))
+                        .getSubject();
 
         return new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
     }

@@ -19,8 +19,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private UserRepository userRepository;
 
     public UserDetailsServiceImpl(
-                BCryptPasswordEncoder bCryptPasswordEncoder,
-                UserRepository userRepository) {
+            BCryptPasswordEncoder bCryptPasswordEncoder,
+            UserRepository userRepository) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userRepository = userRepository;
     }
@@ -35,6 +35,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
 
         return new org.springframework.security.core.userdetails.User(
-                        user.getUsername(), user.getPassword(), new ArrayList<>());
+                    user.getUsername(), user.getPassword(), new ArrayList<>());
     }
 }

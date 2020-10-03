@@ -14,8 +14,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public SecurityConfig(
-                UserDetailsService userDetailsService,
-                BCryptPasswordEncoder bCryptPasswordEncoder) {
+            UserDetailsService userDetailsService,
+            BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
@@ -25,6 +25,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
 
+    // todo: (validation should be done on all requests)
+    //       if jwt is successfully validated on 1 request
+    //       then no validation is required for subsequent requests
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()

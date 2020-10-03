@@ -36,48 +36,44 @@ public class UserControllerTest {
         return userRequest;
     }
 
-    // todo: performing a post request, still WithMockUser annotation not required. why?
-    @BeforeEach
-    void setUp() throws Exception {
-//        resultActions = createUser();
-    }
-
     @Test
     void testCreateUser() throws Exception {
         CreateUserRequest userRequest = createUserRequest();
 
         mvc.perform(
                 post("/api/user/create")
-                    .contentType(MediaType.APPLICATION_JSON_UTF8)
-                    .content(new ObjectMapper().writeValueAsString(userRequest)))
-                .andDo(print())
-                .andExpect(status().isOk());
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(new ObjectMapper().writeValueAsString(userRequest)))
+           .andDo(print())
+           .andExpect(status().isOk());
     }
 
     @Test
     void testLogin() throws Exception {
-        String requestBody = "{\"username\": \"" + USERNAME + "\", \"password\": \"" + PASSWORD + "\"}";
+        String requestBody =
+                "{\"username\": \"" + USERNAME + "\", \"password\": \"" + PASSWORD + "\"}";
 
-        mvc.perform(post("/login")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(requestBody))
-                .andDo(print())
-                .andExpect(status().isOk());
+        mvc.perform(
+                post("/login")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(requestBody))
+           .andDo(print())
+           .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser
     void testFindById() throws Exception {
         mvc.perform(get("/api/user/id/" + 1))
-                .andDo(print())
-                .andExpect(status().isOk());
+           .andDo(print())
+           .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser
     void testFindByUsername() throws Exception {
         mvc.perform(get("/api/user/" + USERNAME))
-                .andDo(print())
-                .andExpect(status().isOk());
+           .andDo(print())
+           .andExpect(status().isOk());
     }
 }

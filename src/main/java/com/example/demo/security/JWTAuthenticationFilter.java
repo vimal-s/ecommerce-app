@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,7 +21,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -34,8 +32,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     public Authentication attemptAuthentication(
-                                HttpServletRequest request,
-                                HttpServletResponse response) throws AuthenticationException {
+                            HttpServletRequest request,
+                            HttpServletResponse response) throws AuthenticationException {
         try {
             CreateUserRequest user =
                     new ObjectMapper().readValue(request.getInputStream(), CreateUserRequest.class);
@@ -59,10 +57,10 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(
-                        HttpServletRequest request,
-                        HttpServletResponse response,
-                        FilterChain chain,
-                        Authentication authResult) {
+                    HttpServletRequest request,
+                    HttpServletResponse response,
+                    FilterChain chain,
+                    Authentication authResult) {
         logger.info("Authentication successful");
 
         String token =
