@@ -23,7 +23,6 @@ public class OrderControllerTest {
 
     private final String USERNAME = "testUser";
 
-    // todo: test with mock data later
     @Test
     @WithMockUser
     void testSubmit() throws Exception {
@@ -32,7 +31,6 @@ public class OrderControllerTest {
            .andExpect(status().isOk());
     }
 
-    // todo: test with mock data later
     @Test
     @WithMockUser
     void testGetOrdersForUser() throws Exception {

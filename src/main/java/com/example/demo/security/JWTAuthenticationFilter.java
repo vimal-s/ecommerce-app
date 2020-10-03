@@ -51,7 +51,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throw new RuntimeException("Authentication failed");
         }
 
-        // todo: replace null with empty Authentication object with empty user details
         return null;
     }
 

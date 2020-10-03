@@ -42,7 +42,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
     private UsernamePasswordAuthenticationToken getAuthentication(String token) {
         logger.info("Validating JWT token");
-        // todo: how can I expire the token if associated user is deleted from the database
+
         String username =
                 JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
                         .build()
