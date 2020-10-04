@@ -1,6 +1,9 @@
 # Ecommerce-Application
  Project made as part of Udacity Nanodegree program
  
+ This project main focus is to integrate spring security with the application and configure it to use 
+ JWT for Authentication and Authorization
+ 
  Client can perform the following:
  - Register with the application
  - Add/Remove available items to/from their cart
