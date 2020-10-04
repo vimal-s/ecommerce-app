@@ -17,12 +17,12 @@ public class CartService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     private CartRepository cartRepository;
     private ItemService itemService;
-    private UserRepository userService;
+    private UserService userService;
 
     public CartService(
             CartRepository cartRepository,
             ItemService itemService,
-            UserRepository userService) {
+            UserService userService) {
         this.cartRepository = cartRepository;
         this.itemService = itemService;
         this.userService = userService;
@@ -34,7 +34,7 @@ public class CartService {
     }
 
     public Cart addItemToCart(ModifyCartRequest cartRequest) {
-        Cart cart = userService.findByUsername(cartRequest.getUsername()).getCart();
+        Cart cart = userService.getUser(cartRequest.getUsername()).getCart();
         Item item = itemService.getItem(cartRequest.getItemId());
 
         logger.info("Adding to cart with id: " + cart.getId() + ", items of total value: " + cart.getTotal());
@@ -43,7 +43,7 @@ public class CartService {
     }
 
     public Cart removeItemFromCart(ModifyCartRequest cartRequest) {
-        Cart cart = userService.findByUsername(cartRequest.getUsername()).getCart();
+        Cart cart = userService.getUser(cartRequest.getUsername()).getCart();
         Item item = itemService.getItem(cartRequest.getItemId());
 
         logger.info("Removing from cart with id: " + cart.getId() + ", items of total value: " + cart.getTotal());

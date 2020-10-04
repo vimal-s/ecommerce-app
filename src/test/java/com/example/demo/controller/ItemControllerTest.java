@@ -1,9 +1,11 @@
 package com.example.demo.controller;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.ItemNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,7 +22,6 @@ public class ItemControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    // todo: see if you want to use jsonpath here
     @Test
     @WithMockUser
     void testGetItems() throws Exception {
@@ -40,10 +41,30 @@ public class ItemControllerTest {
 
     @Test
     @WithMockUser
+    void testGetItemById_shouldFail() throws Exception {
+        long itemId = 50;
+        mvc.perform(get("/api/item/" + itemId))
+           .andDo(print())
+           .andExpect(status().isNotFound())
+           .andExpect(result -> assertTrue(result.getResolvedException() instanceof ItemNotFoundException));
+    }
+
+    @Test
+    @WithMockUser
     void testGetItemsByName() throws Exception {
         String itemName = "Round Widget";
         mvc.perform(get("/api/item/name/" + itemName))
            .andDo(print())
            .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    void testGetItemsByName_shouldFail() throws Exception {
+        String itemName = "Triangle Widget";
+        mvc.perform(get("/api/item/name/" + itemName))
+           .andDo(print())
+           .andExpect(status().isNotFound())
+           .andExpect(result -> assertTrue(result.getResolvedException() instanceof ItemNotFoundException));
     }
 }

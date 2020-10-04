@@ -1,10 +1,13 @@
 package com.example.demo.controller;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.EmptyOrderNotAllowedException;
+import com.example.demo.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -37,5 +40,14 @@ public class OrderControllerTest {
         mvc.perform(get("/api/order/history/" + USERNAME))
            .andDo(print())
            .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    void testGetOrdersForUser_shouldFail() throws Exception {
+        mvc.perform(get("/api/order/history/" + "userNotInDb"))
+           .andDo(print())
+           .andExpect(status().isNotFound())
+           .andExpect(result -> assertTrue(result.getResolvedException() instanceof UserNotFoundException));
     }
 }

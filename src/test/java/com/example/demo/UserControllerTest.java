@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -49,6 +50,20 @@ public class UserControllerTest {
     }
 
     @Test
+    void testCreateUser_shouldFail() throws Exception {
+        CreateUserRequest userRequest = createUserRequest();
+        userRequest.setConfirmPassword("differFromPassword");
+
+        mvc.perform(
+                post("/api/user/create")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(new ObjectMapper().writeValueAsString(userRequest)))
+           .andDo(print())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof PasswordConfirmationException))
+           .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void testLogin() throws Exception {
         String requestBody =
                 "{\"username\": \"" + USERNAME + "\", \"password\": \"" + PASSWORD + "\"}";
@@ -62,6 +77,19 @@ public class UserControllerTest {
     }
 
     @Test
+    void testLogin_shouldFail() throws Exception {
+        String requestBody =
+                "{\"username\": \"" + USERNAME + "\", \"password\": \"" + "incorrectPassword" + "\"}";
+
+        mvc.perform(
+                post("/login")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(requestBody))
+            .andDo(print())
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     @WithMockUser
     void testFindById() throws Exception {
         mvc.perform(get("/api/user/id/" + 1))
@@ -71,9 +99,27 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser
+    void testFindById_shouldFail() throws Exception {
+        mvc.perform(get("/api/user/id/" + 50))
+           .andDo(print())
+           .andExpect(status().isNotFound())
+           .andExpect(result -> assertTrue(result.getResolvedException() instanceof UserNotFoundException));
+    }
+
+    @Test
+    @WithMockUser
     void testFindByUsername() throws Exception {
         mvc.perform(get("/api/user/" + USERNAME))
            .andDo(print())
            .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    void testFindByUsername_shouldFail() throws Exception {
+        mvc.perform(get("/api/user/" + "userNotInDb"))
+           .andDo(print())
+           .andExpect(status().isNotFound())
+           .andExpect(result -> assertTrue(result.getResolvedException() instanceof UserNotFoundException));
     }
 }
